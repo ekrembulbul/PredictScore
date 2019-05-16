@@ -14,6 +14,8 @@ from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 
 macKodu = -1
 
+# 'Tahmin et' butonuna tiklandigi an girilen mac kodu alinir ve tahminler
+# yapilir.
 def getMacKodu():
     global count
     macKodu = int(macKoduEntry.get())
@@ -24,6 +26,7 @@ def getMacKodu():
     np_rates = []
     np_rates.append(rates)
     
+    # Tahmin yapilir.
     ms, ms_gol, kg, skor = skorTahmin(np_rates)
     ms = str((ms))
     ms_gol = str((ms_gol))
@@ -35,11 +38,13 @@ def getMacKodu():
     global kgL
     global skorL
     
+    # Sonuclar ekrana yazdirilir.
     msL["text"] = ms
     ms_golL["text"] = ms_gol
     kgL["text"] = kg
     skorL["text"] = skor
     
+# Site uzerinden macin oranlari alinir.
 def WebScraping(mac_kodu):
     url = 'http://arsiv.mackolik.com/Genis-Iddaa-Programi'
     driver = webdriver.Chrome()
@@ -48,6 +53,7 @@ def WebScraping(mac_kodu):
     sel_soup = BeautifulSoup(html, 'html.parser')
     rates = []
     
+    # Her oran html tag'inin class ismi ile alinir.
     TakeRate('MS1', mac_kodu, sel_soup, rates)
     TakeRate('MSX', mac_kodu, sel_soup, rates)
     TakeRate('MS2', mac_kodu, sel_soup, rates)
@@ -78,6 +84,7 @@ def WebScraping(mac_kodu):
     driver.close()
     return rates
 
+# Class ismi hazirlanir.
 def TakeRate(code, mac_kodu, sel_soup, rates):
     _class = 'iddaa-rate ' + str(mac_kodu) + code
     tmp = sel_soup.find('a', {'class':_class})
@@ -86,8 +93,10 @@ def TakeRate(code, mac_kodu, sel_soup, rates):
     else:
         rates.append(float(1))
 
+# Arayuz baslatilir.
 root = Tk()
 
+# Arayuz olusturulur.
 macKoduLabel = Label(root, text="Maç Kodu: ", font="Arial 14")
 macKoduEntry = Entry(root, font="Arial 14")
 button = Button(root, text="Tahmin Et", font="Arial 14", command=getMacKodu, padx=5, pady=5)
@@ -95,12 +104,12 @@ ms_label = Label(root, text="Maç Sonucu: ", font="Arial 14")
 ms_gol_label = Label(root, text="Gol Sayısı (3 Gol): ", font="Arial 14")
 kg_label = Label(root, text="Iki takımda gol atar: ", font="Arial 14")
 skor_label = Label(root, text="Olası Skorlar: ", font="Arial 14")
-
 msL = Label(root, font="Arial 14")
 ms_golL = Label(root, font="Arial 14")
 kgL = Label(root, font="Arial 14")
 skorL = Label(root, font="Arial 14")
 
+# Label'lar ve button arayuz uzerinde yerlestirilir.
 macKoduLabel.grid(row=0, column=0, padx=10, pady=10)
 macKoduEntry.grid(row=0, column=1, padx=10, pady=10)
 button.grid(row=1, columnspan=2, padx=10, pady=10)
@@ -108,11 +117,9 @@ ms_label.grid(row=2, column=0, padx=10, pady=10)
 ms_gol_label.grid(row=3, column=0, padx=10, pady=10)
 kg_label.grid(row=4, column=0, padx=10, pady=10)
 skor_label.grid(row=5, column=0, padx=10, pady=10)
-
 msL.grid(row=2, column=1, padx=10, pady=10)
 ms_golL.grid(row=3, column=1, padx=10, pady=10)
 kgL.grid(row=4, column=1, padx=10, pady=10)
 skorL.grid(row=5, column=1, padx=10, pady=10)
-
 
 root.mainloop()
